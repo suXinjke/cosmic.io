@@ -1,0 +1,200 @@
+@font-face {
+    font-family: 'Aileron';
+    src: url('./Aileron-Bold.woff2') format('woff2'),
+        url('./Aileron-Bold.woff') format('woff'),
+        url('./Aileron-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Aileron';
+    src: url('./Aileron-Black.woff2') format('woff2'),
+        url('./Aileron-Black.woff') format('woff'),
+        url('./Aileron-Black.ttf') format('truetype');
+    font-weight: 900;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Aileron';
+    src: url('./Aileron-Regular.woff2') format('woff2'),
+        url('./Aileron-Regular.woff') format('woff'),
+        url('./Aileron-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+:root {
+    --color-primary: #FF8F02;
+    --color-secondary: #816949;
+    --color-light: #eeeeee;
+    --color-dark: #333333;
+
+    --nav-height: 2.5rem;
+}
+
+html, body, #root, #app {
+    margin: 0;
+    height: 100%;
+
+    background-color: var(--color-dark);
+    color: var(--color-light);
+    font-family: 'Aileron', 'Helvetica', 'Arial', sans-serif;
+}
+
+iframe {
+    display: block;
+}
+
+#app {
+    display: grid;
+    grid-template-columns: auto 20rem;
+    grid-template-rows: var(--nav-height) 1fr;
+}
+
+nav {
+    height: var(--nav-height);
+
+    grid-row: 1;
+    grid-column: 1 / 3;
+}
+
+.hide-navbar nav {
+    height: calc(var(--nav-height) * 1.5);
+
+    --offset: calc(var(--nav-height) * -1);
+    transform: translate(0, var(--offset));
+
+    width: 100%;
+    position: fixed;
+
+    transition: transform 0.2s;
+}
+
+.hide-navbar nav:hover {
+    --offset: 0;
+}
+
+nav .content {
+    height: var(--nav-height);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1rem;
+
+    background-color: var(--color-secondary);
+}
+
+nav h1 {
+    margin: 0;
+}
+
+nav button {
+    width: var(--nav-height);
+    height: var(--nav-height);
+    color: var(--color-light);
+    font-size: 1.5rem;
+    font-family: inherit;
+    font-weight: 900;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+
+    vertical-align: top;
+    line-height: 0;
+}
+
+nav button span {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 10px;
+    text-align: center;
+    font-weight: 400;
+}
+
+nav button.active {
+    color: var(--color-dark);
+    background-color: var(--color-primary);
+}
+
+nav button:hover {
+    cursor: pointer;
+}
+
+.youtube-embed,
+.youtube-embed-message {
+    width: 100%;
+    height: 100%;
+}
+
+.youtube-embed-message {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.youtube-embed.hidden {
+    width: 1px;
+    height: 1px;
+    position: fixed;
+    top: 0;
+}
+
+.videos {
+    background-color: black;
+
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.hide-history .videos {
+    grid-column: 1 / 3;
+}
+
+.hide-navbar .videos {
+    grid-row: 1 / 3;
+}
+
+.history, .about {
+    border-top: 2px solid var(--color-dark);
+    overflow: auto;
+
+    grid-row: 2;
+    grid-column: 2;
+}
+
+.history h2 {
+    margin: 0;
+}
+
+.history h5 {
+    margin: 0;
+    font-weight: lighter;
+}
+
+.history .entry {
+    padding: 1rem 0.5rem 1rem 1rem;
+    cursor: pointer;
+}
+
+.history .entry.active {
+    background-color: var(--color-primary);
+    color: var(--color-dark);
+}
+
+.about {
+    padding: 0 1rem;
+}
+
+.about a, .about a:visited {
+    color: var(--color-primary)
+}
+
+.about ul {
+    padding: inherit;
+}
+
+.about button {
+    display: block;
+    margin: 0 0 0 auto;
+}
