@@ -34,8 +34,8 @@ interface YoutubeEmbedProps {
     videoIds: VideoID[]
     onEnd: () => void
     onFaultyVideo: (id: string) => void
-    onPlay: YouTubeProps['onPlay']
-    onPause: YouTubeProps['onPause']
+    onPlay: NonNullable<YouTubeProps['onPlay']>
+    onPause: NonNullable<YouTubeProps['onPause']>
 }
 
 function YouTubeEmbed({
