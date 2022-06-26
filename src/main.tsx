@@ -196,7 +196,7 @@ function CosmicIOApp() {
                     if (selectedHistoryVideo) {
                         return
                     }
-                    const { video_id, title, author, ...rest } = e.target.getVideoData()
+                    const { video_id, title, author } = e.target.getVideoData()
                     setHistory((h) => {
                         if (h[0]?.id === video_id) {
                             return h
