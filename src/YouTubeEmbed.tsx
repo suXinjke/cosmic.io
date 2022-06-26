@@ -39,14 +39,14 @@ interface YoutubeEmbedProps {
 }
 
 function YouTubeEmbed({
-    videoIds: videos,
+    videoIds,
     onEnd,
     onFaultyVideo,
     onPause,
     onPlay,
 }: YoutubeEmbedProps) {
     const frames = useRef<Record<string, any>>({})
-    const activeVideoId = videos[0]
+    const activeVideoId = videoIds[0]
 
     useEffect(
         function autoPlayVideos() {
@@ -79,7 +79,7 @@ function YouTubeEmbed({
                 </Message>
             )}
             {activeVideoId &&
-                videos.map((videoId, idx) => {
+                videoIds.map((videoId, idx) => {
                     const isHidden = idx !== 0
 
                     return (
