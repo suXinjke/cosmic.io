@@ -2,13 +2,39 @@ import { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 
 import { ImPlay3, ImPause2, ImForward3 } from 'react-icons/im'
-import { IoInformation } from 'react-icons/io5'
+import { IoInformation, IoCloseSharp } from 'react-icons/io5'
 
 import astrosocket from './astrosocket'
 import useLocalStorage from './useLocalStorage'
 import YouTubeEmbed from './YouTubeEmbed'
 
 import './styles/main.css'
+
+function IgnoreButton({ onIgnore, visible }: { onIgnore: () => void; visible: boolean }) {
+    const [clicked, setClicked] = useState(false)
+
+    function onClick() {
+        if (clicked) {
+            onIgnore()
+            setClicked(false)
+        } else {
+            setClicked(true)
+        }
+    }
+
+    return (
+        <button
+            style={visible ? undefined : { visibility: 'hidden' }}
+            title="Ignore videos from this channel"
+            onClick={onClick}
+            onMouseLeave={() => setClicked(false)}
+            onBlur={() => setClicked(false)}
+        >
+            <IoCloseSharp />
+            <span>{clicked ? 'SURE?' : 'IGNORE'}</span>
+        </button>
+    )
+}
 
 function CosmicIOApp() {
     const [queue, setQueue] = useLocalStorage<VideoID[]>('cosmic:queue', [])
@@ -19,6 +45,19 @@ function CosmicIOApp() {
     )
     const [playMode, setPlayMode] = useLocalStorage<'play' | 'pause'>('cosmic:playMode', 'play')
 
+    const [ignoredVideos, setIgnoredChannels] = useLocalStorage<IgnoredVideos>('cosmic:ignored', {})
+    const ignoredVideosArray = Object.entries(ignoredVideos)
+        .sort((a, b) => {
+            if (a[1] < b[1]) {
+                return 1
+            } else if (a[1] > b[1]) {
+                return -1
+            } else {
+                return 0
+            }
+        })
+        .map(([author]) => author)
+
     const [videoPaused, setVideoPaused] = useState(true)
     const [selectedHistoryVideo, setSelectedHistoryVideo] = useState<VideoID>('')
 
@@ -27,6 +66,21 @@ function CosmicIOApp() {
     function skipToNextVideo() {
         setQueue((q) => q.slice(1))
         setSelectedHistoryVideo('')
+    }
+
+    function ignoreVideosFromCurrentChannel() {
+        const activeVideo = history.find((v) => v.id === videosToPlay[0])
+        if (!activeVideo) {
+            return
+        }
+
+        setIgnoredChannels((i) => ({
+            ...i,
+            [activeVideo.author]: new Date().toISOString(),
+        }))
+        setHistory((h) => h.filter((v) => v.author !== activeVideo.author))
+
+        skipToNextVideo()
     }
 
     useEffect(function setupSocket() {
@@ -145,6 +199,10 @@ function CosmicIOApp() {
                             <ImForward3 />
                             <span>NEXT</span>
                         </button>
+                        <IgnoreButton
+                            onIgnore={ignoreVideosFromCurrentChannel}
+                            visible={videosToPlay[0] !== undefined}
+                        />
                         <span style={{ margin: '0 1rem' }} />
                         <button
                             className={viewMode === 0 ? 'active' : ''}
@@ -179,6 +237,7 @@ function CosmicIOApp() {
             </nav>
             <YouTubeEmbed
                 videoIds={videosToPlay}
+                ignoredVideos={ignoredVideos}
                 onFaultyVideo={(faultyVideoId) => {
                     setQueue((q) => q.filter((videoId) => videoId !== faultyVideoId))
                 }}
@@ -243,37 +302,63 @@ function CosmicIOApp() {
             )}
             {viewMode === 0 && (
                 <div className="about">
-                    <p>
-                        This website leeches off random YouTube video IDs, provided by{' '}
-                        <a href="http://astronaut.io/">astronaut.io</a>.
-                    </p>
-                    <p>
-                        I was unsatisfied with how astronaut works, but noticed that it allows to
-                        connect cross-origin and decided to make a better one
-                    </p>
-                    <ul>
-                        <li>Don't miss on interesting findings with recent view history</li>
-                        <li>Auto-skip is more reliable</li>
-                        <li>Skip to next videos on demand</li>
-                        <li>You're not deprived of all player options like volume</li>
-                        <li>
-                            No video background to distract you from watching, hide the history and
-                            navbar if you wish
-                        </li>
-                    </ul>
-                    <button
-                        onClick={() => {
-                            if (confirm('You sure want to clear view history?')) {
-                                setHistory([])
-                            }
-                        }}
-                    >
-                        Clear view history
-                    </button>
-                    <p style={{ textAlign: 'right' }}>
-                        <a href="https://suxin.space">suxin.space</a> |{' '}
-                        <a href="https://github.com/suXinjke/cosmic.io">GitHub</a>
-                    </p>
+                    <div className="content">
+                        <p>
+                            This website leeches off random YouTube video IDs, provided by{' '}
+                            <a href="http://astronaut.io/">astronaut.io</a>.
+                        </p>
+                        <p>
+                            I was unsatisfied with how astronaut works, but noticed that it allows
+                            to connect cross-origin and decided to make a better one
+                        </p>
+                        <ul>
+                            <li>Don't miss on interesting findings with recent view history</li>
+                            <li>Auto-skip is more reliable</li>
+                            <li>Skip to next videos on demand</li>
+                            <li>You're not deprived of all player options like volume</li>
+                            <li>
+                                No video background to distract you from watching, hide the history
+                                and navbar if you wish
+                            </li>
+                            <li>Ignore channels you don't find interesting</li>
+                        </ul>
+                    </div>
+                    <div className="footer">
+                        <h4>Ignored channels:</h4>
+                        <div className="ignored-channels">
+                            {ignoredVideosArray.length === 0 && <span>None</span>}
+                            {ignoredVideosArray.map((author) => (
+                                <button
+                                    key={author}
+                                    onClick={() => {
+                                        setIgnoredChannels((i) => {
+                                            const copy = { ...i }
+                                            delete copy[author]
+                                            return copy
+                                        })
+                                    }}
+                                >
+                                    {author}
+                                    <IoCloseSharp />
+                                </button>
+                            ))}
+                        </div>
+                        <button
+                            className="clear-view-history-button"
+                            onClick={() => {
+                                if (confirm('You sure want to clear video history and queue?')) {
+                                    setHistory([])
+                                    setQueue([])
+                                }
+                            }}
+                        >
+                            Clear video history and queue
+                        </button>
+                        <p style={{ textAlign: 'right' }}>
+                            <a href="https://suxin.space">suxin.space</a> |{' '}
+                            <a href="https://github.com/suXinjke/cosmic.io">GitHub</a>
+                        </p>
+                    </div>
                 </div>
             )}
         </div>

@@ -32,6 +32,7 @@ function Message({ children }: React.PropsWithChildren) {
 
 interface YoutubeEmbedProps {
     videoIds: VideoID[]
+    ignoredVideos: IgnoredVideos
     onEnd: () => void
     onFaultyVideo: (id: string) => void
     onPlay: NonNullable<YouTubeProps['onPlay']>
@@ -40,6 +41,7 @@ interface YoutubeEmbedProps {
 
 function YouTubeEmbed({
     videoIds,
+    ignoredVideos,
     onEnd,
     onFaultyVideo,
     onPause,
@@ -105,7 +107,14 @@ function YouTubeEmbed({
                                 player.playVideo()
                             }}
                             onPause={onPause}
-                            onPlay={onPlay}
+                            onPlay={(e) => {
+                                const { author } = e.target.getVideoData()
+                                if (ignoredVideos[author]) {
+                                    onFaultyVideo(videoId)
+                                } else {
+                                    onPlay(e)
+                                }
+                            }}
                             onStateChange={(e) => {
                                 const bufferedSomeData = e.data === 3
                                 if (bufferedSomeData && isHidden) {

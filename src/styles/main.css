@@ -183,6 +183,12 @@ nav button:hover {
 }
 
 .about {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.about, .about ul {
     padding: 0 1rem;
 }
 
@@ -190,11 +196,30 @@ nav button:hover {
     color: var(--color-primary)
 }
 
-.about ul {
-    padding: inherit;
+.about .footer {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
 }
 
-.about button {
+.about .footer .clear-view-history-button {
     display: block;
     margin: 0 0 0 auto;
+}
+
+.about .footer .ignored-channels {
+    flex: 1;
+    overflow: auto;
+    margin-bottom: 0.5rem;
+}
+
+.about .footer h4 {
+    margin: 0;
+}
+
+.ignored-channels button {
+    display: inline-flex;
+    align-items: center;
 }

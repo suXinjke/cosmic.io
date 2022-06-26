@@ -20,3 +20,5 @@ interface ViewHistoryEntry {
     name: string
     author: string
 }
+
+type IgnoredVideos = Record<string, UTCDate>
