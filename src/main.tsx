@@ -34,7 +34,7 @@ function CosmicIOApp() {
 
         const videoLimitMargin = {
             lower: 20,
-            upper: 50,
+            upper: 100,
         }
         let stopAddingVideos = queue.length > videoLimitMargin.lower
 
