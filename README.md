@@ -1,8 +1,6 @@
 # cosmic.io
 
-**astronaut.io** stopped working since May 2023. I plan on making my own backend which anyone will be able to self-host given the access to [Youtube API](https://developers.google.com/youtube/v3/docs/).
-
-![RIP astronaut.io](https://raw.githubusercontent.com/suXinjke/cosmic.io/master/public/meta-pic2.png)
+~~**astronaut.io** stopped working since May 2023. I plan on making my own backend which anyone will be able to self-host given the access to [Youtube API](https://developers.google.com/youtube/v3/docs/).~~ astronaut.io is back online since mid June 2023 😋
 
 ---
 
